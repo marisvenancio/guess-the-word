@@ -7,7 +7,7 @@ const letterInput = document.querySelector(".letter");
 // Empty paragraph where the word in progress will appear
 const wordInProgress = document.querySelector(".word-in-progress");
 // Paragraph where the remaining guesses will display
-const remainingGuessesElement = document.querySelector(".remaining span");
+const remainingGuessesElement = document.querySelector(".remaining");
 // Span inside the paragraph where the remanining guesses will display
 const remainingGuessesSpan = document.querySelector("span");
 // Empty paragraph where messages will appear when the player guesses a letter
@@ -18,7 +18,7 @@ const playAgain = document.querySelector(".play-again");
 // Word the player needs to guess
 let word = "magnolia"; // starter word
 // Array that shows the letters the player has guessed 
-const guessedLettersArray = [];
+let guessedLettersArray = [];
 
 let remainingGuesses = 8;
 
@@ -30,6 +30,7 @@ const getWord = async function () {
     const wordArray = words.split("\n");
     const randomIndex = Math.floor(Math.random() * wordArray.length);
     word = wordArray[randomIndex].trim();
+    console.log(word);
     placeholder(word);
 };
 
@@ -46,7 +47,7 @@ const placeholder = function (word) {
     wordInProgress.innerText = placeholderLetters.join("");
 };
 
-placeholder(word);
+// placeholder(word);
 
 // Takes the letter the player inputs everytime they press the "guess" button
 // and cleans the input value so user can input a new letter
@@ -84,7 +85,6 @@ const validateInput = function (input) {
         return input
     }
 };
-
 
 
 // Capitalizes the letter input, and checks if the user has input this letter yet or not
@@ -135,6 +135,8 @@ const checkIfWin = function() {
     if (wordInProgress.innerText === word.toUpperCase()) {
         message.classList.add("win");
         message.innerHTML = `<p class="highlight">You guessed the correct word! Congrat!</p>`
+    
+    startOver();
     };
 };
 
@@ -151,10 +153,34 @@ const countRemaningGuesses = function(letterGuess) {
 
     if (remainingGuesses === 0) {
         message.innerHTML = `Game over! The word was <span class="highlight">${upperWord}</span>`;
-        remainingGuessesSpan.innerText = `${remainingGuesses} guesses`
+        startOver();
+        // remainingGuessesSpan.innerText = `${remainingGuesses} guesses`
     } else if (remainingGuesses === 1) {
         remainingGuessesSpan.innerText = `${remainingGuesses} guess`
     } else {
         remainingGuessesSpan.innerText = `${remainingGuesses} guesses`
     };
 };
+
+// Displays the play again button once the game is over
+const startOver = function () {
+    guessButton.classList.add("hide");
+    remainingGuessesElement.classList.add("hide");
+    guessedLettersList.classList.add("hide");
+    playAgain.classList.remove("hide");
+}
+
+// Resets the game
+playAgain.addEventListener("click", function() {
+    message.classList.remove("win");
+    message.innerText = "";
+    guessedLettersList.innerHTML = "";
+    guessedLettersArray = [];
+    remainingGuesses = 8;
+    remainingGuessesSpan.innerText = `${remainingGuesses} remaining`;
+    guessButton.classList.remove("hide");
+    remainingGuessesElement.classList.remove("hide");
+    guessedLettersList.classList.remove("hide");
+    playAgain.classList.add("hide");
+    getWord();
+});
